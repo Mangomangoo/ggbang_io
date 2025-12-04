@@ -11,7 +11,7 @@
             --text-main: #1c1c1e;
             --text-sub: #8e8e93;
             --circle-bg: #e5e5ea;
-            --accent-color: #d63031; /* 战意主色调：红 */
+            --accent-color: #d63031;
         }
 
         body {
@@ -25,40 +25,38 @@
             justify-content: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             user-select: none;
-            -webkit-user-select: none; /*甚至是禁止选择文本，像App一样*/
+            -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         h1 {
-            font-size: 1.5rem;
-            color: var(--accent-color);
+            font-size: 1.4rem;
+            color: var(--text-main);
             margin-bottom: 30px;
-            font-weight: 800;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            letter-spacing: 1px;
+            font-weight: 600;
+            opacity: 0.8;
         }
 
         .card {
             background-color: var(--card-bg);
             width: 85%;
-            max-width: 400px;
-            padding: 40px 20px;
+            max-width: 380px;
+            padding: 40px 25px;
             border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             text-align: center;
-            min-height: 350px;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s;
         }
 
-        /* 初始状态：长按按钮区域 */
+        /* === 长按区域样式 === */
         .interaction-area {
             position: relative;
-            width: 160px;
-            height: 160px;
+            width: 140px;
+            height: 140px;
             background-color: var(--circle-bg);
             border-radius: 50%;
             display: flex;
@@ -66,17 +64,17 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s;
             margin: 0 auto;
         }
 
         .interaction-area:active, .interaction-area.pressing {
-            transform: scale(0.9);
+            transform: scale(0.92);
             background-color: #d1d1d6;
         }
 
         .interaction-area .icon {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 5px;
         }
 
@@ -84,9 +82,9 @@
             font-size: 0.9rem;
             color: var(--text-main);
             font-weight: 600;
+            margin-top: 5px;
         }
 
-        /* 外部光圈动画 */
         .ripple {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -105,103 +103,104 @@
             100% { transform: scale(1.4); opacity: 0; }
         }
 
-        .instruction-text {
-            margin-top: 30px;
-            color: var(--text-sub);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        /* 结果展示区域 (默认隐藏) */
+        /* === 结果区域样式 === */
         #result-content {
             display: none;
             width: 100%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 结果图标/大字 */
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
         }
 
         .unit-name {
-            font-size: 2.2rem;
-            font-weight: 900;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--text-main);
-            margin-bottom: 15px;
-            min-height: 1.2em;
+            margin-bottom: 10px;
         }
 
         .unit-desc {
-            font-size: 1rem;
-            color: #555;
+            font-size: 0.95rem;
+            color: #666;
             line-height: 1.6;
-            text-align: left;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* 锁定状态提示 */
+        .saved-hint {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            background: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .hint-text {
+            margin-top: 30px;
+            color: var(--text-sub);
+            font-size: 0.85rem;
         }
 
         .footer {
-            margin-top: 40px;
-            font-size: 0.8rem;
+            position: fixed;
+            bottom: 30px;
+            font-size: 0.75rem;
             color: #c7c7cc;
-        }
-
-        /* 滚动时的模糊动效 */
-        .blur-motion {
-            filter: blur(2px);
-            opacity: 0.7;
-        }
-
-        .reset-btn {
-            margin-top: 20px;
-            background: var(--text-main);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <!-- 标题 -->
-    <h1>测试你是战意的哪个兵团 ⚔️</h1>
+    <h1 id="main-title">测测你是战意的哪个兵团 🛡️</h1>
 
     <div class="card">
-        <!-- 初始/长按区域 -->
+        <!-- 1. 初始/长按区域 -->
         <div id="start-view">
             <div class="interaction-area" id="trigger-btn">
                 <div class="ripple"></div>
                 <div class="icon">👇</div>
-                <div class="label">长按这里测试</div>
+                <div class="label">长按开始</div>
             </div>
-            <p class="instruction-text" id="hint-text">长按屏幕中间区域，看看你是什么兵团！</p>
+            <p class="hint-text">长按屏幕中间区域，匹配你的兵团灵魂</p>
         </div>
 
-        <!-- 结果区域 -->
+        <!-- 2. 结果区域 (显示后自动保存) -->
         <div id="result-content">
+            <!-- 这里可以用 emoji 或者你之前的文字特效 -->
+            <div class="result-icon">⚔️</div> 
             <div class="unit-name" id="unit-name">???</div>
             <div class="unit-desc" id="unit-desc"></div>
-            <button class="reset-btn" onclick="resetTest()">再测一次</button>
+            
+            <!-- 只有结果出来后才显示这个 -->
+            <div class="saved-hint">提示：结果已保存，刷新不会改变哦！</div>
         </div>
     </div>
 
-    <!-- 底部版权（可修改为你自己的名字） -->
     <div class="footer">作者：将军</div>
 
     <script>
-        // === 战意兵团数据配置 ===
-        // 格式：{ name: "兵团名", desc: "简介" }
+        // === 战意兵团数据 ===
         const units = [
-            { name: "铁浮屠", desc: "你是战场上的推土机。虽然行动迟缓，但这也意味着你稳重可靠。当你决定出手时，没有什么能阻挡你。你性格强硬，不善言辞，但破坏力惊人。" },
-            { name: "陌刀", desc: "你是团队中最值得信赖的守护神。面对冲向你的困难（或骑兵），你从不后退。你原则性极强，只有在守护重要之物时才会展露锋芒。" },
-            { name: "神机五千营", desc: "你喜欢掌控全局，讨厌被贴脸。你的思维像震天雷一样具有爆发力，能在别人意想不到的地方给予重击。你适合远程指挥，而不是近身肉搏。" },
-            { name: "关宁铁骑", desc: "你全能且霸道。既有远程的视野，又有近战的爆发。你可能是个多面手，在生活和工作中都能独当一面，但有时候会因为太冲动而陷入重围。" },
-            { name: "戚家军", desc: "如果你是戚家军，说明你极具性价比且忠诚。你可能平时不显山露水，但只要给你机会（触发连击），你能爆发出超越阶层的惊人能量。" },
-            { name: "不列颠长弓", desc: "你性格高冷，喜欢保持距离。你擅长站在远处通过超远的视野（射程）洞察一切。虽然由于身板脆怕被针对，但只要找好位置，你就是MVP。" },
-            { name: "白山黑水铁浮屠", desc: "真正的老兵。你经历了无数版本的更迭，依然屹立不倒。你沉默寡言，手中的连枷就是你的语言。任何花里胡哨在你绝对的力量面前都是徒劳。" },
-            { name: "榆林骠骑", desc: "你像风一样自由。虽然不是最顶级的重骑，但你的冲锋极具性价比。你适合在混乱的局势中找到突破口，打一枪换一个地方。" },
-            { name: "尽忠长枪营", desc: "你是最好的辅助。你愿意牺牲自己为团队开路（平推）。你性格温和但坚定，只要是为了大局，你愿意推平一切障碍。" },
-            { name: "瓦兰吉卫队", desc: "你是狂战士。平时可能拿着盾牌看起来人畜无害，一旦情绪（怒气）积攒到一定程度，掏出斧头的瞬间，没人敢惹你。" }
+            { name: "铁浮屠", desc: "你是战场上的推土机。虽然行动迟缓，但这也意味着你稳重可靠。当你决定出手时，没有什么能阻挡你。" },
+            { name: "陌刀", desc: "你是团队的守护神。面对困难（或骑兵），你从不后退。原则性极强，只有在守护重要之物时才会展露锋芒。" },
+            { name: "神机五千营", desc: "你喜欢掌控全局。思维像震天雷一样具有爆发力，能在别人意想不到的地方给予重击。" },
+            { name: "关宁铁骑", desc: "全能且霸道。既有远程的视野，又有近战的爆发。在生活和工作中都能独当一面。" },
+            { name: "戚家军", desc: "极具性价比且忠诚。平时不显山露水，但只要给你机会，你能爆发出超越阶层的惊人能量。" },
+            { name: "不列颠长弓", desc: "性格高冷，喜欢保持距离。你擅长洞察一切，虽然身板脆，但只要找好位置，你就是MVP。" },
+            { name: "尽忠长枪营", desc: "最好的辅助。性格温和但坚定，只要是为了大局，你愿意牺牲自己推平一切障碍。" },
+            { name: "瓦兰吉卫队", desc: "狂战士。平时看着随和，一旦情绪（怒气）积攒到一定程度，掏出斧头的瞬间，没人敢惹你。" }
         ];
 
         const triggerBtn = document.getElementById('trigger-btn');
@@ -209,93 +208,76 @@
         const resultContent = document.getElementById('result-content');
         const unitNameEl = document.getElementById('unit-name');
         const unitDescEl = document.getElementById('unit-desc');
-        const hintText = document.getElementById('hint-text');
+        const mainTitle = document.getElementById('main-title');
+
+        // 存储的 Key 名称
+        const STORAGE_KEY = 'zhanyi_test_result_v1';
 
         let timer = null;
-        let shuffleTimer = null;
         let isPressing = false;
 
-        // 开始随机滚动文字
-        function startShuffle() {
-            // 切换UI显示：隐藏按钮图标，准备显示文字
-            triggerBtn.querySelector('.icon').style.display = 'none';
-            triggerBtn.querySelector('.label').innerText = "分析中...";
-            triggerBtn.classList.add('pressing');
-            hintText.innerText = "正在匹配你的兵团灵魂...";
-            
-            clearInterval(shuffleTimer);
-            shuffleTimer = setInterval(() => {
-                const randomUnit = units[Math.floor(Math.random() * units.length)];
-                // 这里我们暂时不显示名字在按钮上，保持神秘感，或者可以在上方显示
-            }, 50);
-        }
+        // === 核心修改：页面加载时检查是否有结果 ===
+        window.onload = function() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                // 如果有保存的结果，直接显示结果页
+                const result = JSON.parse(savedData);
+                showFinalResult(result, true);
+            }
+        };
 
-        // 显示结果
-        function showResult() {
-            clearInterval(shuffleTimer);
-            const finalUnit = units[Math.floor(Math.random() * units.length)];
-            
-            // 隐藏初始界面，显示结果界面
+        // 显示结果的函数
+        function showFinalResult(unit, isFromStorage) {
             startView.style.display = 'none';
             resultContent.style.display = 'block';
             
-            unitNameEl.innerText = finalUnit.name;
-            unitDescEl.innerText = finalUnit.desc;
+            unitNameEl.innerText = unit.name;
+            unitDescEl.innerText = unit.desc;
+
+            // 如果不是来自缓存（即第一次测），则保存结果
+            if (!isFromStorage) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(unit));
+            }
         }
 
-        // 重置
-        window.resetTest = function() {
-            startView.style.display = 'block';
-            resultContent.style.display = 'none';
-            
-            triggerBtn.querySelector('.icon').style.display = 'block';
-            triggerBtn.querySelector('.icon').innerText = '👇';
-            triggerBtn.querySelector('.label').innerText = '长按这里测试';
-            hintText.innerText = '长按屏幕中间区域，看看你是什么兵团！';
-        }
-
-        // 交互逻辑处理
+        // 开始交互
         const startAction = (e) => {
-            if(e.cancelable) e.preventDefault(); // 防止手机端长按弹出菜单
+            if(e.cancelable) e.preventDefault();
             isPressing = true;
             
-            // 视觉反馈
-            startShuffle();
+            triggerBtn.classList.add('pressing');
+            triggerBtn.querySelector('.label').innerText = "感应中...";
 
-            // 长按 800ms 后自动出结果（或者你可以改成松开出结果，现在的逻辑是松开出）
-            // 这里我们模拟原本的逻辑：按住一会儿，松开出结果。
-            // 只要按下的时间超过 300ms 就算有效
+            // 长按 1500ms (1.5秒) 后出结果
             timer = setTimeout(() => {
-                // 这个定时器主要是为了确保用户不是误触
-            }, 300);
+                if (isPressing) {
+                    // 随机抽取一个
+                    const randomUnit = units[Math.floor(Math.random() * units.length)];
+                    showFinalResult(randomUnit, false);
+                    isPressing = false;
+                }
+            }, 1500);
         };
 
         const endAction = () => {
              if (!isPressing) return;
              isPressing = false;
              triggerBtn.classList.remove('pressing');
-
-             // 如果只是点击一下，提示要长按
-             // 这里为了体验流畅，直接松开就出结果（模拟截图那种APP的快感）
-             showResult();
+             clearTimeout(timer);
+             
+             // 如果没按够时间松开了，还原
+             if (startView.style.display !== 'none') {
+                triggerBtn.querySelector('.label').innerText = "长按开始";
+             }
         };
 
-        // 绑定事件 (同时兼容鼠标和触摸)
+        // 绑定事件
         triggerBtn.addEventListener('mousedown', startAction);
         triggerBtn.addEventListener('touchstart', startAction, {passive: false});
 
         document.addEventListener('mouseup', endAction);
         document.addEventListener('touchend', endAction);
         
-        // 防止移出区域导致状态卡死
-        triggerBtn.addEventListener('mouseleave', () => {
-            if(isPressing) {
-                isPressing = false;
-                triggerBtn.classList.remove('pressing');
-                resetTest(); // 移出去了算放弃
-            }
-        });
-
     </script>
 </body>
 </html>
